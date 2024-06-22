@@ -2,10 +2,9 @@ import json
 file = open("data.json", "r")
 data = json.load(file)["messages"]
 file.close()
-answer_len = 150
-result = "commbined attack on france"
+answer_len = 200
+result = input("Enter Prompt: ")
 prompt = result.split()[-1]
-print(result, end=" ")
 while len(result) < answer_len:
     word_after = {}
     for line in data:
@@ -26,7 +25,7 @@ while len(result) < answer_len:
     for word in word_after:
         if word in result:
             continue
-        print(word, end=" ")
+        print(word, end=" ", flush=True)
         result += " " + word
         prompt = word
         break
@@ -37,5 +36,7 @@ while len(result) < answer_len:
             prompt = list(word_after.keys())[0]
         except IndexError:
             print("\n#-----No More Data-----#")
+            input("\nEnter to end the app")
             quit()
+input("\nEnter to end the app")
 
