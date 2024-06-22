@@ -1,34 +1,38 @@
 import json
-
-file = open("data.json")
+file = open("data.json", "r")
 data = json.load(file)["messages"]
 file.close()
-answer_len = 100
-prompt = "you"
-result = prompt
-
+answer_len = 300
+result = "invade germany"
+prompt = result.split()[-1]
+print(result, end=" ")
 while len(result) < answer_len:
     word_after = {}
     for line in data:
         words = line.split()
         for i, word in enumerate(words):
-            if word == prompt and i != len(words)-1:
-                if words[i+1] in word_after.keys():
-                    word_after[words[i+1]] += 1
-                else:
-                    word_after[words[i+1]] = 1
-    max_value_name = list(word_after.keys())[0]
-    second_max_value = max_value_name
-    for value in word_after:
-        if word_after[value] > word_after[max_value_name]:
-            second_max_value = max_value_name
-            max_value_name = value
-    if max_value_name in result:
-        result += " " + second_max_value
-        prompt = second_max_value
+            for wi, prompt in enumerate(result.split()):
+                if wi - len(result.split()) < -3:
+                    continue
+                if word.upper() == prompt.upper() and i < len(words)-(len(result.split())-wi):
+                    if words[i+(len(result.split())-wi)] in word_after.keys():
+                        word_after[words[i+(len(result.split())-wi)]] += 1*(1/len(result.split())-wi)
+                    else:
+                        word_after[words[i+(len(result.split())-wi)]] = 1*(1/len(result.split())-wi)
+    word_after = {key: val for key, val in sorted(word_after.items(), key = lambda ele: ele[1], reverse = True)}
+    for word in word_after:
+        if word in result:
+            continue
+        print(word, end=" ")
+        result += " " + word
+        prompt = word
+        break
     else:
-        result += " " + max_value_name
-        prompt = max_value_name
-print(result)
-        
+        try:
+            print(list(word_after.keys())[0], end=" ")
+            result += " " + list(word_after.keys())[0]
+            prompt = list(word_after.keys())[0]
+        except IndexError:
+            print("\n#-----No More Data-----#")
+            quit()
 
